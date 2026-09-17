@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Verification // Access Protocol</title>
+    <style>
+        /* ==========================================================================
+       Swiss Color-Block Tokens & Global Reset
+       ========================================================================== */
+        :root {
+            --ink: #111111;
+            --paper: #f5f0e6;
+            --cobalt: #1f3fd6;
+            --coral: #ff5a4e;
+            --mustard: #f2c218;
+            --mint: #3fd4a6;
+            --muted: #d9d3c6;
+
+            --font: "Helvetica Neue", Helvetica, Arial, "Inter", sans-serif;
+            --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --pad-x: clamp(1.25rem, 5vw, 4rem);
+            --pad-y: clamp(2rem, 6vw, 4rem);
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font);
+            color: var(--ink);
+            background: var(--paper);
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection {
+            background: var(--mustard);
+            color: var(--ink);
+        }
+
+        .label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.28em;
+            line-height: 1;
+        }
+
+        /* ==========================================================================
+       Hero Section
+       ========================================================================== */
+        .hero {
+            background: var(--ink);
+            color: var(--paper);
+            padding: var(--pad-y) var(--pad-x);
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .hero .label {
+            color: var(--mustard);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 6.5rem);
+            line-height: 0.9;
+            letter-spacing: -0.05em;
+            font-weight: 800;
+            text-transform: uppercase;
+            max-width: 14ch;
+        }
+
+        .hero .support {
+            font-size: clamp(1rem, 1.4vw, 1.15rem);
+            color: var(--muted);
+            max-width: 52ch;
+        }
+
+        /* ==========================================================================
+       Full-Bleed Alert Banner Strip
+       ========================================================================== */
+        .alert-strip {
+            display: none;
+            padding: 1.25rem var(--pad-x);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            border-bottom: 4px solid var(--ink);
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .alert-strip.is-error {
+            display: flex;
+            background: var(--coral);
+            color: var(--ink);
+        }
+
+        .alert-strip.is-success {
+            display: flex;
+            background: var(--mint);
+            color: var(--ink);
+        }
+
+        /* ==========================================================================
+       Main Verification Block
+       ========================================================================== */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-block {
+            background: var(--paper);
+            padding: var(--pad-y) var(--pad-x);
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 600px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .form-group .hint {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .form-group input {
+            height: 54px;
+            font-family: var(--font);
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0 1rem;
+            background: #ffffff;
+            color: var(--ink);
+            border: 3px solid var(--ink);
+            outline: none;
+            transition: outline 150ms var(--ease);
+        }
+
+        .form-group input:focus-visible {
+            outline: 4px solid var(--cobalt);
+            outline-offset: 2px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            font-family: var(--font);
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 1rem 2rem;
+            border: 3px solid var(--ink);
+            cursor: pointer;
+            transition: background-color 200ms var(--ease), color 200ms var(--ease);
+        }
+
+        .btn-submit {
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .btn-submit:hover {
+            background: var(--cobalt);
+            color: var(--paper);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--ink);
+        }
+
+        .btn-reset:hover {
+            background: var(--mustard);
+            color: var(--ink);
+        }
+
+        .btn:focus-visible {
+            outline: 4px solid var(--cobalt);
+            outline-offset: 3px;
+        }
+
+        /* ==========================================================================
+       Footer
+       ========================================================================== */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem var(--pad-x);
+            background: var(--paper);
+            color: var(--ink);
+            border-top: 4px solid var(--ink);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        /* Universal Hero Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            width: fit-content;
+            background: transparent;
+            color: var(--paper);
+            border: 2px solid var(--paper);
+            border-radius: 0;
+            padding: 0.45rem 0.9rem;
+            font-family: var(--font);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease);
+        }
+
+        .back-btn .arrow {
+            font-size: 1rem;
+            line-height: 1;
+            transition: transform 200ms var(--ease);
+        }
+
+        .back-btn:hover {
+            background: var(--mustard);
+            color: var(--ink);
+            border-color: var(--mustard);
+        }
+
+        .back-btn:hover .arrow {
+            transform: translateX(-4px);
+        }
+
+        .back-btn:focus-visible {
+            outline: 4px solid var(--mustard);
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Hero Header -->
+    <header class="hero">
+        <button type="button" class="back-btn" onclick="history.back()" aria-label="Return to previous page">
+            <span class="arrow" aria-hidden="true">←</span>
+            <span>RETURN</span>
+        </button>
+        <p class="label">Practice 3 | JUSTIN WHITAKER</p>
+        <h1>PASSWORD<br>VALIDATOR</h1>
+        <p class="support">Enter and confirm your password. Passwords must be at least eight characters long and match
+            character-for-character.</p>
+    </header>
+
+    <!-- Live Status Banner Strip -->
+    <aside id="alertStrip" class="alert-strip" role="alert" aria-live="polite">
+        <span id="alertMessage">STATUS NOTIFICATION</span>
+        <span class="label" id="alertLabel">INFO</span>
+    </aside>
+
+    <main>
+        <section class="form-block">
+            <form id="passwordForm" novalidate>
+
+                <!-- Primary Password -->
+                <div class="form-group">
+                    <label for="primaryPassword">Password</label>
+                    <input type="password" id="primaryPassword" name="primaryPassword" required
+                        autocomplete="new-password">
+                    <span class="hint">Minimum length: 8 characters</span>
+                </div>
+
+                <br>
+
+                <!-- Secondary Password Confirmation -->
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                        autocomplete="new-password">
+                    <span class="hint">Re-enter your exact password</span>
+                </div>
+
+                <br>
+
+                <!-- Action Buttons -->
+                <div class="actions">
+                    <button type="submit" class="btn btn-submit">Verify</button>
+                    <button type="reset" class="btn btn-reset" id="resetBtn">Reset</button>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <span class="label">SYSTEM CREDENTIAL CONTROL</span>
+        <span class="label">2026</span>
+    </footer>
+
+    <!-- Verification Script -->
+    <script>
+        const form = document.getElementById('passwordForm');
+        const primaryPassword = document.getElementById('primaryPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const alertStrip = document.getElementById('alertStrip');
+        const alertMessage = document.getElementById('alertMessage');
+        const alertLabel = document.getElementById('alertLabel');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function displayStatus(message, isError) {
+            alertStrip.classList.remove('is-error', 'is-success');
+            alertStrip.classList.add(isError ? 'is-error' : 'is-success');
+            alertMessage.textContent = message;
+            alertLabel.textContent = isError ? 'VALIDATION REJECTED' : 'VERIFICATION APPROVED';
+        }
+
+        function clearStatus() {
+            alertStrip.classList.remove('is-error', 'is-success');
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const pass1 = primaryPassword.value;
+            const pass2 = confirmPassword.value;
+
+            // Condition 1: Length check
+            if (pass1.length < 8) {
+                const errorText = 'Password must be at least eight characters long.';
+                displayStatus(errorText, true);
+                alert(errorText);
+                primaryPassword.focus();
+                return;
+            }
+
+            // Condition 2: Equality check
+            if (pass1 !== pass2) {
+                const mismatchText = 'Passwords do not match. Please ensure both fields are identical.';
+                displayStatus(mismatchText, true);
+                alert(mismatchText);
+                confirmPassword.focus();
+                return;
+            }
+
+            // Condition 3: Success state
+            const successText = 'Two passwords are matched.';
+            displayStatus(successText, false);
+            alert(successText);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearStatus();
+            primaryPassword.focus();
+        });
+    </script>
+
+</body>
+
+</html>

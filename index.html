@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EECS 348 Lab Six</title>
+  <style>
+    :root {
+      --ink: #111111;
+      --paper: #f5f0e6;
+      --cobalt: #1f3fd6;
+      --coral: #ff5a4e;
+      --mustard: #f2c218;
+      --mint: #3fd4a6;
+      --font: "Helvetica Neue", Helvetica, Arial, "Inter", sans-serif;
+      --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: var(--font);
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.4;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.28em;
+    }
+
+    /* Hero */
+    .hero {
+      background: var(--ink);
+      color: var(--paper);
+      padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem);
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .hero .label {
+      color: var(--mustard);
+    }
+
+    .hero h1 {
+      font-size: clamp(3rem, 12vw, 10rem);
+      line-height: 0.9;
+      letter-spacing: -0.05em;
+      font-weight: 800;
+      text-transform: uppercase;
+      max-width: 14ch;
+    }
+
+    .hero .sub {
+      font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+      font-weight: 700;
+      max-width: 40ch;
+    }
+
+    .hero .support {
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      max-width: 52ch;
+      color: #d9d3c6;
+    }
+
+    /* Cards */
+    .practices {
+      flex: 1;
+    }
+
+    .practices h2 {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      list-style: none;
+    }
+
+    @media (min-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: clamp(18rem, 45vh, 30rem);
+      padding: 2rem 1.5rem;
+      text-decoration: none;
+      color: var(--card-fg);
+      background: var(--card-bg);
+      transition:
+        background-color 200ms var(--ease),
+        color 200ms var(--ease);
+      animation: rise 480ms var(--ease) both;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      background: var(--card-hover);
+      color: var(--card-hover-fg);
+    }
+
+    .card:focus-visible {
+      outline: 4px solid var(--card-fg);
+      outline-offset: -8px;
+    }
+
+    .card .num {
+      font-size: clamp(6rem, 14vw, 11rem);
+      font-weight: 800;
+      line-height: 0.85;
+      letter-spacing: -0.06em;
+    }
+
+    .card .row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .card .arrow {
+      display: inline-block;
+      font-size: 2rem;
+      line-height: 1;
+      transition: transform 200ms var(--ease);
+    }
+
+    .card:hover .arrow,
+    .card:focus-visible .arrow {
+      transform: translateX(6px);
+    }
+
+    .c1 {
+      --card-bg: var(--cobalt);
+      --card-fg: var(--paper);
+      --card-hover: var(--mint);
+      --card-hover-fg: var(--ink);
+      animation-delay: 0ms;
+    }
+
+    .c2 {
+      --card-bg: var(--coral);
+      --card-fg: var(--ink);
+      --card-hover: var(--ink);
+      --card-hover-fg: var(--coral);
+      animation-delay: 80ms;
+    }
+
+    .c3 {
+      --card-bg: var(--mustard);
+      --card-fg: var(--ink);
+      --card-hover: var(--cobalt);
+      --card-hover-fg: var(--paper);
+      animation-delay: 160ms;
+    }
+
+    .c4 {
+      --card-bg: var(--mint);
+      --card-fg: var(--ink);
+      --card-hover: var(--ink);
+      --card-hover-fg: var(--mint);
+      animation-delay: 240ms;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Footer */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1.25rem, 5vw, 4rem);
+      background: var(--paper);
+      color: var(--ink);
+      border-top: 4px solid var(--ink);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="label">Index</p>
+    <h1>EECS 348 Lab Six</h1>
+    <p class="sub">Hello Everyone! This is the index of our Lab 6</p>
+    <p class="support">
+      Please follow these links to visit other practices. Try to make it more
+      beautiful 🥳
+    </p>
+  </header>
+
+  <main class="practices">
+    <nav aria-labelledby="practices-heading">
+      <h2 id="practices-heading">Practices</h2>
+      <ul class="grid">
+        <li>
+          <a class="card c1" href="practice1.html">
+            <span class="num" aria-hidden="true">1</span>
+            <span class="row">
+              <span>Practice1</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="card c2" href="practice2.html">
+            <span class="num" aria-hidden="true">2</span>
+            <span class="row">
+              <span>Practice2</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="card c3" href="practice3.html">
+            <span class="num" aria-hidden="true">3</span>
+            <span class="row">
+              <span>Practice3</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a class="card c4" href="practice4.php">
+            <span class="num" aria-hidden="true">4</span>
+            <span class="row">
+              <span>Practice4</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </main>
+
+  <footer>
+    <span class="label">EECS 348</span>
+    <span class="label">2026</span>
+  </footer>
+</body>
+</html>
